@@ -35,7 +35,5 @@ class Incomes(Base):
     total_left = Column(DECIMAL(10, 2), nullable=True, default=0.00)
 
 
-
-
 engine = create_engine(Config.DATABASE_URI)
 Base.metadata.create_all(engine)

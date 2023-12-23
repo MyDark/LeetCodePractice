@@ -1,4 +1,5 @@
 import os
 
+
 class Config:
-    DATABASE_URI = os.getenv("DATABASE_URI", "mysql+mysqlconnector://test:test1@test2/test3")
+    DATABASE_URI = os.getenv("DATABASE_URI", "mysql+mysqlconnector://db_user:db_pass@db_host/db_name")

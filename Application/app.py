@@ -7,7 +7,7 @@ from config import Config
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = Config.DATABASE_URI
-controller = BudgetController(Config.DATABASE_URI)
+controller = BudgetController()
 
 
 @app.route('/')

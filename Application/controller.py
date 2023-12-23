@@ -3,8 +3,9 @@ from sqlalchemy import create_engine, func
 from model import Expenses, Incomes
 from config import Config
 
+
 class BudgetController:
-    def __init__(self, Config.DATABASE_URI):
+    def __init__(self):
         self.engine = create_engine(Config.DATABASE_URI)
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
@@ -212,20 +213,10 @@ class BudgetController:
         return all_expenses
 
 
-db_url = 'mysql+mysqlconnector://budgeteer:HELLfire1990@localhost/budget'
-
-controller = BudgetController(db_url)
-
-
-
-
-
-
-expenses = controller.get_all_expenses()
-print(expenses)
+controller = BudgetController()
 
 #############  Add expenses  #############
-#controller.add_expense(2023, 'April', 'Food', 2000)
+# controller.add_expense(2023, 'April', 'Food', 2000)
 
 #############  GET EXPENSES  #############
 # # Get total expenses by category
@@ -239,23 +230,20 @@ print(expenses)
 # print(f"Total Expenses in 2023: {total_expenses_2023}")
 
 
-
 #############  Add incomes  #############
 # controller.add_income(2023, 'April', 36.5686, 300.00)
 
 #############  GET INCOMES  #############
-# incomes = controller.get_incomes(2023, 'April')
-# for income in incomes:
-#     print(f"Income (USD): {income.income_usd}")
-#     print(f"Income (UAH): {income.income_uah}")
-#     print(f"Single Tax: {income.single_tax}")
-#     print(f"SSC: {income.ssc}")
-#     print(f"Total Taxes: {income.total_taxes}")
-#     print(f"Clean Income (UAH): {income.clean_income}")
-#     print(f"Additional Income: {income.additional_income}")
-#     print(f"Total Left: {income.total_left}")
+incomes = controller.get_incomes(2023, 'April')
+for income in incomes:
+    print(f"Income (USD): {income.income_usd}")
+    print(f"Income (UAH): {income.income_uah}")
+    print(f"Single Tax: {income.single_tax}")
+    print(f"SSC: {income.ssc}")
+    print(f"Total Taxes: {income.total_taxes}")
+    print(f"Clean Income (UAH): {income.clean_income}")
+    print(f"Additional Income: {income.additional_income}")
+    print(f"Total Left: {income.total_left}")
 
 # total_left_for_april_2023 = controller.get_total_left(2023, 'April')
 # print(f"Total Left for April 2023: {total_left_for_april_2023}")
-
-

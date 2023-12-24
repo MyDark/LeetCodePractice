@@ -1,6 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, func
-from model import Expenses, Incomes
+from model import Expenses, Incomes, Accounts
 from config import Config
 
 
@@ -59,7 +59,7 @@ class BudgetController:
         income.total_taxes = income.single_tax + income.ssc
         income.clean_income = income.income_uah - income.total_taxes
         income.additional_income = additional_income
-        income.total_left = income.clean_income + income.additional_income - income.total_taxes
+        income.total_left = income.clean_income + income.additional_income
 
         # Add the income to the session and commit the changes
         self.session.add(income)
@@ -144,7 +144,7 @@ class BudgetController:
             self.session.delete(expense)
             self.session.commit()
 
-    def modify_income(self, income_id, new_year, new_month, new_exchange_rate, new_income_usd,  new_additional_income):
+    def modify_income(self, income_id, new_year, new_month, new_exchange_rate, new_income_usd, new_additional_income):
         # Modify the income amount of an existing income
         income = self.session.query(Incomes).get(income_id)
         if income:
@@ -220,7 +220,21 @@ class BudgetController:
         return all_expenses
 
 
-#controller = BudgetController()
+class AccountController:
+    def __init__(self):
+        self.engine = create_engine(Config.DATABASE_URI)
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
+
+    def create_account(self, name, currency):
+        account = Accounts(name=name, currency=currency, balance=0)
+
+        self.session.add(account)
+        self.session.commit()
+
+    def get_all_accounts(self):
+        all_accounts = self.session.query(Accounts).all()
+        return all_accounts
 
 #############  Add expenses  #############
 # controller.add_expense(2023, 'April', 'Food', 2000)

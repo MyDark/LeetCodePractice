@@ -1,0 +1,46 @@
+{% include 'header.html' %}
+		<table class="table table-primary table-hover">
+			<thead>
+				<tr class="table-primary">
+					<th scope="col">Name</th>
+					<th scope="col">Currency</th>
+					<th scope="col">Balance</th>
+					<th scope="col">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for account in accounts %}
+				{% include 'account_table_row.html' %}
+				{% endfor %}
+			</tbody>
+		</table>
+
+<!-- Add Account Button -->
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addAccountModal">
+		Create Account
+		</button>
+		<!-- Add Account Modal -->
+		<div class="modal fade" id="addAccountModal" tabindex="-1" aria-labelledby="addAccountModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addAccountModalLabel">Create Account</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form action="/create_account" method="post">
+                            <label for="name">Name:</label>
+                            <input type="text" class="form-control" id="name" name="name" required><br>
+                            <label for="currency">Currency:</label>
+                            <select class="form-select" id="currency" name="currency" required>
+                                <option value="UAH">UAH</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                            </select><br>
+							<button type="submit" class="btn btn-success">Create Account</button>
+				  		</form>
+					</div>
+				</div>
+			</div>
+		</div>
+{% include 'footer.html' %}

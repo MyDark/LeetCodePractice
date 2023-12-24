@@ -2,12 +2,13 @@ from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from model import Expenses, Incomes
-from controller import BudgetController
+from controller import BudgetController, AccountController
 from config import Config
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = Config.DATABASE_URI
 controller = BudgetController()
+account = AccountController()
 
 
 @app.route('/')
@@ -91,6 +92,21 @@ def modify_income(income_id):
     return redirect(url_for('incomes'))
 
 
+@app.route('/accounts')
+def accounts():
+    accounts = account.get_all_accounts()
+    return render_template('accounts.html', accounts=accounts)
+
+
+@app.route('/create_account', methods=['POST'])
+def create_account():
+    # Create a new account
+    name = request.form['name']
+    currency = request.form['currency']
+    account.create_account(name, currency)
+    return redirect(url_for('accounts'))
+
+
 if __name__ == '__main__':
-    #app.run(host="0.0.0.0", port=5000)
+    # app.run(host="0.0.0.0", port=5000)
     app.run(debug=True)

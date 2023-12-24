@@ -35,5 +35,14 @@ class Incomes(Base):
     total_left = Column(DECIMAL(10, 2), nullable=True, default=0.00)
 
 
+class Accounts(Base):
+    __tablename__ = 'accounts'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(255), nullable=False)
+    currency = Column(String(255), nullable=False)
+    balance = Column(DECIMAL(10, 2), nullable=True)
+
+
 engine = create_engine(Config.DATABASE_URI)
 Base.metadata.create_all(engine)

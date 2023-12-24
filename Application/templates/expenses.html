@@ -7,25 +7,21 @@
 					<th scope="col">Month</th>
 					<th scope="col">Category</th>
 					<th scope="col">Amount</th>
+					<th scope="col">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for expense in expenses %}
-				<tr class="table-light">
-					<td>{{ expense.year }}</td>
-					<td>{{ expense.month }} </td>
-					<td>{{ expense.category }} </td>
-					<td>{{ expense.amount }} </td>
-				</tr>
+				{% include 'expense_table_row.html' %}
 				{% endfor %}
 			</tbody>
 		</table>
 
-<!-- Add Income Button -->
+<!-- Add Expense Button -->
 		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
 		Add Expense
 		</button>
-		<!-- Add Income Modal -->
+		<!-- Add Expense Modal -->
 		<div class="modal fade" id="addExpenseModal" tabindex="-1" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -41,12 +37,13 @@
 							<input type="text" class="form-control" id="month" name="month" required>
 							<label for="category">Category:</label>
 							<select class="form-select" id="category" name="category" required>
-								<option>Rent</option>
-								<option>Utilities</option>
-								<option>Tel. Inet. Bills</option>
-								<option>Domestics</option>
-								<option>Online Buys</option>
+								<option value="Rent">Rent</option>
+								<option value="Utilities">Utilities</option>
+								<option value="Tel. Inet. Bills">Tel. Inet. Bills</option>
+								<option value="Domestics">Domestics</option>
+								<option value="Online Buys">Online Buys</option>
 							</select>
+
 							<!--<input type="text" class="form-control" id="category" name="category" required> !-->
 							<label for="amount">Amount:</label>
 							<input type="text" class="form-control" id="amount" name="amount" required><br>

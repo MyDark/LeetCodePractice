@@ -1,0 +1,32 @@
+<tr class="table-light">
+    <td>{{ expense.year }}</td>
+    <td>{{ expense.month }} </td>
+    <td>{{ expense.category }} </td>
+    <td>{{ expense.amount }} </td>
+    <td>
+		<!-- Modify Expense Button -->
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modifyExpenseModal_{{ expense.id }}">
+		Modify
+		</button>
+		<a href="{{ url_for('delete_expense', expense_id=expense.id) }}" class="btn btn-danger">Delete</a>
+	</td>
+</tr>
+
+<!-- Modify Expense Modal -->
+<div class="modal fade" id="modifyExpenseModal_{{ expense.id }}" tabindex="-1" aria-labelledby="modifyExpenseModalLabel_{{ expense.id }}" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modifyExpenseModalLabel_{{ expense.id }}">Modify Expense</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form action="{{ url_for('modify_expense', expense_id=expense.id) }}" method="post">
+					<label for="new_amount">New Amount:</label>
+					<input type="text" id="new_amount" name="new_amount" required>
+					<button type="submit" class="btn btn-warning">Modify</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

@@ -37,7 +37,7 @@ def add_expense():
 
     controller.add_expense(year, month, category, amount)
 
-    return redirect(url_for('index'))
+    return redirect(url_for('expenses'))
 
 
 @app.route('/add_income', methods=['POST'])
@@ -51,7 +51,39 @@ def add_income():
 
     controller.add_income(year, month, exchange_rate, income_usd, additional_income)
 
-    return redirect(url_for('index'))
+    return redirect(url_for('incomes'))
+
+
+@app.route('/delete_expense/<int:expense_id>')
+def delete_expense(expense_id):
+    # Delete an expense by ID
+    controller.delete_expense(expense_id)
+    return redirect(url_for('expenses'))
+
+
+@app.route('/modify_expense/<int:expense_id>', methods=['POST'])
+def modify_expense(expense_id):
+    # Modify the amount of an expense by ID
+    new_amount = float(request.form['new_amount'])
+    controller.modify_expense(expense_id, new_amount)
+    return redirect(url_for('expenses'))
+
+
+@app.route('/delete_income/<int:income_id>')
+def delete_income(income_id):
+    # Delete an income by ID
+    controller.delete_income(income_id)
+    return redirect(url_for('incomes'))
+
+
+@app.route('/modify_income/<int:income_id>', methods=['POST'])
+def modify_income(income_id):
+    # Modify the income amount by ID
+    new_exchange_rate = float(request.form['new_exchange_rate'])
+    new_income_usd = float(request.form['new_income_usd'])
+    new_additional_income = float(request.form['new_additional_income'])
+    controller.modify_income(income_id, new_exchange_rate, new_income_usd, new_additional_income)
+    return redirect(url_for('incomes'))
 
 
 if __name__ == '__main__':

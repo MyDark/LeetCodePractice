@@ -1,70 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Koto Budgeting</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
-  </head>
-  <body>
-		  <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
-	  <div class="container-fluid">
-		<a class="navbar-brand" href="#">Koto Budgeting</a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
-		  <span class="navbar-toggler-icon"></span>
+	<head>
+		<meta charset="utf-8">
+		<title>Koto Budgeting</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="./">Koto Budgeting</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarColor02">
+					<ul class="navbar-nav me-auto">
+						<li class="nav-item">
+							<a class="nav-link active" href="./incomes">Incomes
+							<span class="visually-hidden">(current)</span>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="./expenses">Expenses</a>
+						</li>
+					</ul>
+					<form class="d-flex">
+						<input class="form-control me-sm-2" type="search" placeholder="Search">
+						<button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+					</form>
+				</div>
+			</div>
+		</nav>
+		<table class="table table-hover">
+			<thead>
+				<tr class="table-dark">
+					<th scope="col">Year</th>
+					<th scope="col">Month</th>
+					<th scope="col">Exchange Rate</th>
+					<th scope="col">Income USD</th>
+					<th scope="col">Income UAH</th>
+					<th scope="col">Single Tax</th>
+					<th scope="col">SSC</th>
+					<th scope="col">Total Tax</th>
+					<th scope="col">Clean</th>
+					<th scope="col">Additional Income</th>
+					<th scope="col">Total Left</th>
+					<th scope="col">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for income in incomes %}
+				{% include 'income_table_row.html' %}
+				{% endfor %}
+			</tbody>
+		</table>
+		<!-- Add Income Button -->
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addIncomeModal">
+		Add Income
 		</button>
-		<div class="collapse navbar-collapse" id="navbarColor02">
-		  <ul class="navbar-nav me-auto">
-			<li class="nav-item">
-			  <a class="nav-link active" href="./incomes">Incomes
-				<span class="visually-hidden">(current)</span>
-			  </a>
-			</li>
-			<li class="nav-item">
-			  <a class="nav-link" href="./expenses">Expenses</a>
-			</li>
-			
-		  </ul>
-		  <form class="d-flex">
-			<input class="form-control me-sm-2" type="search" placeholder="Search">
-			<button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-		  </form>
+		<!-- Add Income Modal -->
+		<div class="modal fade" id="addIncomeModal" tabindex="-1" aria-labelledby="addIncomeModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addIncomeModalLabel">Add Income</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form action="/add_income" method="post">
+							<label for="year">Year:</label><input type="text" id="year" name="year" required><br>
+							<label for="month">Month:</label><input type="text" id="month" name="month" required><br>
+							<label for="exchange_rate">Exchange Rate:</label><input type="text" id="exchange_rate" name="exchange_rate" required><br>
+							<label for="income_usd">Income (USD):</label> <input type="text" id="income_usd" name="income_usd" required><br>
+							<label for="additional_income">Add. Income:</label><input type="text" id="additional_income" name="additional_income" required><br>
+							<button type="submit">Add Income</button>
+						</form>
+					</div>
+				</div>
+			</div>
 		</div>
-	  </div>
-	</nav>
-
-	<table class="table table-hover">
-	  <thead>
-		<tr class="table-dark">
-		  <th scope="col">Year</th>
-		  <th scope="col">Month</th>
-		  <th scope="col">Exchange Rate</th>
-		  <th scope="col">Income USD</th>
-		  <th scope="col">Income UAH</th>
-		  <th scope="col">Single Tax</th>
-		  <th scope="col">SSC</th>
-		  <th scope="col">Total Tax</th>
-		  <th scope="col">Clean</th>
-		  <th scope="col">Additional Income</th>
-		  <th scope="col">Total Left</th>
-		</tr>
-	  </thead>
-	  <tbody>
-                {% for income in incomes %}
-                    <tr class="table-light">
-                        <td>{{ income.year }}</td>
-                        <td>{{ income.month }} </td>
-                        <td>{{ income.exchange_rate }}</td>
-                        <td>{{ income.income_usd }} USD</td>
-                        <td>{{ income.income_uah }} UAH</td>
-                        <td>{{ income.single_tax }} UAH</td>
-                        <td>{{ income.ssc }} UAH</td>
-                        <td>{{ income.total_taxes }} UAH</td>
-                        <td>{{ income.clean_income }} UAH</td>
-                        <td>{{ income.additional_income }} UAH</td>
-                        <td>{{ income.total_left }} UAH</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-	</table>
-  </body>
+		<script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+	</body>
+</html>

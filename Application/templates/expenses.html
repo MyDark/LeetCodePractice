@@ -1,57 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Koto Budgeting</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
-  </head>
-  <body>
-		  <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
-	  <div class="container-fluid">
-		<a class="navbar-brand" href="#">Koto Budgeting</a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
-		  <span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbarColor02">
-		  <ul class="navbar-nav me-auto">
-			<li class="nav-item">
-			  <a class="nav-link active" href="./incomes">Incomes
-			  </a>
-			</li>
-			<li class="nav-item">
-			  <a class="nav-link" href="./expenses">Expenses
-			  <span class="visually-hidden">(current)</span>
-			  </a>
-			</li>
-			
-		  </ul>
-		  <form class="d-flex">
-			<input class="form-control me-sm-2" type="search" placeholder="Search">
-			<button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-		  </form>
-		</div>
-	  </div>
-	</nav>
-
-	<table class="table table-hover">
-	  <thead>
-		<tr class="table-dark">
-		  <th scope="col">Year</th>
-		  <th scope="col">Month</th>
-		  <th scope="col">Category</th>
-		  <th scope="col">Amount</th>
-		</tr>
-	  </thead>
-	  <tbody>
-	  {% for expense in expenses %}
-		<tr class="table-light">
-			<td>{{ expense.year }}</td>
-			<td>{{ expense.month }} </td>
-			<td>{{ expense.category }} </td>
-			<td>{{ expense.amount }} </td>
-		</tr>
-	  {% endfor %}
-	  </tbody>
-	</table>
-  </body>
+	<head>
+		<meta charset="utf-8">
+		<title>Koto Budgeting</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="./">Koto Budgeting</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarColor02">
+					<ul class="navbar-nav me-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="./incomes">Incomes
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link active" href="./expenses">Expenses
+							<span class="visually-hidden">(current)</span>
+							</a>
+						</li>
+					</ul>
+					<form class="d-flex">
+						<input class="form-control me-sm-2" type="search" placeholder="Search">
+						<button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+					</form>
+				</div>
+			</div>
+		</nav>
+		<table class="table table-hover">
+			<thead>
+				<tr class="table-dark">
+					<th scope="col">Year</th>
+					<th scope="col">Month</th>
+					<th scope="col">Category</th>
+					<th scope="col">Amount</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for expense in expenses %}
+				<tr class="table-light">
+					<td>{{ expense.year }}</td>
+					<td>{{ expense.month }} </td>
+					<td>{{ expense.category }} </td>
+					<td>{{ expense.amount }} </td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		<h3>Add Expense</h3>
+		<form action="/add_expense" method="post">
+			<label for="year">Year:</label>
+			<input type="text" id="year" name="year" required>
+			<label for="month">Month:</label>
+			<input type="text" id="month" name="month" required>
+			<label for="category">Category:</label>
+			<input type="text" id="category" name="category" required>
+			<label for="amount">Amount:</label>
+			<input type="text" id="amount" name="amount" required>
+			<button type="submit">Add Expense</button>
+		</form>
+	</body>
+</html>

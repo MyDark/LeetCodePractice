@@ -1,0 +1,42 @@
+<tr class="table-light">
+	<td>{{ income.year }}</td>
+	<td>{{ income.month }} </td>
+	<td>{{ income.exchange_rate }}</td>
+	<td>{{ income.income_usd }} USD</td>
+	<td>{{ income.income_uah }} UAH</td>
+	<td>{{ income.single_tax }} UAH</td>
+	<td>{{ income.ssc }} UAH</td>
+	<td>{{ income.total_taxes }} UAH</td>
+	<td>{{ income.clean_income }} UAH</td>
+	<td>{{ income.additional_income }} UAH</td>
+	<td>{{ income.total_left }} UAH</td>
+	<td>
+		<!-- Modify Income Button -->
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modifyIncomeModal_{{ income.id }}">
+		Modify
+		</button>
+		<a href="{{ url_for('delete_income', income_id=income.id) }}" class="btn btn-danger">Delete</a>
+	</td>
+</tr>
+<!-- Modify Income Modal -->
+<div class="modal fade" id="modifyIncomeModal_{{ income.id }}" tabindex="-1" aria-labelledby="modifyIncomeModalLabel_{{ income.id }}" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modifyIncomeModalLabel_{{ income.id }}">Modify Income</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form action="{{ url_for('modify_income', income_id=income.id) }}" method="post">
+					<label for="new_exchange_rate">New Exchange Rate:</label>
+					<input type="text" id="new_exchange_rate" name="new_exchange_rate" required>
+					<label for="new_income_usd">New Income USD:</label>
+					<input type="text" id="new_income_usd" name="new_income_usd" required>
+					<label for="new_additional_income">New Add. Income:</label>
+					<input type="text" id="new_additional_income" name="new_additional_income" required>
+					<button type="submit" class="btn btn-warning">Modify</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

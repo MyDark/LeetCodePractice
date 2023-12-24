@@ -141,17 +141,19 @@ class BudgetController:
             self.session.delete(expense)
             self.session.commit()
 
-    def modify_income(self, income_id, new_income_usd):
+    def modify_income(self, income_id, new_exchange_rate, new_income_usd,  new_additional_income):
         # Modify the income amount of an existing income
         income = self.session.query(Incomes).get(income_id)
         if income:
             # Calculate additional fields based on the given logic
+            income.exchange_rate = new_exchange_rate
             income.income_usd = new_income_usd
+            income.additional_income = new_additional_income
             income.income_uah = new_income_usd * income.exchange_rate
             income.single_tax = 0.05 * income.income_uah  # Single Tax is 5%
-            income.total_taxes = income.single_tax + income.ssc
+            income.total_taxes = float(income.single_tax) + float(income.ssc)
             income.clean_income = income.income_uah - income.total_taxes
-            income.total_left = income.clean_income + income.additional_income - income.total_taxes
+            income.total_left = income.clean_income + income.additional_income
 
             # Commit the changes
             self.session.commit()

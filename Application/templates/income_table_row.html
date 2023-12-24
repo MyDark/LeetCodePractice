@@ -28,12 +28,38 @@
 			</div>
 			<div class="modal-body">
 				<form action="{{ url_for('modify_income', income_id=income.id) }}" method="post">
-					<label for="new_exchange_rate">New Exchange Rate:</label>
-					<input type="text" id="new_exchange_rate" name="new_exchange_rate" required>
-					<label for="new_income_usd">New Income USD:</label>
-					<input type="text" id="new_income_usd" name="new_income_usd" required>
-					<label for="new_additional_income">New Add. Income:</label>
-					<input type="text" id="new_additional_income" name="new_additional_income" required>
+					<label for="year">Year:</label>
+							<select class="form-select" id="year" name="year" required>
+								<option value="2024">2024</option>
+							</select>
+							<label for="month">Month:</label>
+							<select class="form-select" id="month" name="month" required>
+								<option value="January">January</option>
+								<option value="February">February</option>
+								<option value="March">March</option>
+								<option value="April">April</option>
+								<option value="May">May</option>
+								<option value="June">June</option>
+								<option value="July">July</option>
+								<option value="August">August</option>
+								<option value="September">September</option>
+								<option value="October">October</option>
+								<option value="November">November</option>
+								<option value="December">December</option>
+							</select>
+					<div class="form-group">
+						<label for="new_exchange_rate">New Exchange Rate:</label>
+						<input class="form-control" type="text" id="new_exchange_rate" name="new_exchange_rate" required>
+					</div>
+					<div class="form-group">
+						<label for="new_income_usd">New Income USD:</label>
+						<input class="form-control" type="text" id="new_income_usd" name="new_income_usd" required>
+					</div>
+					<div class="form-group">
+						<label for="new_additional_income">New Add. Income:</label>
+						<input class="form-control" type="text" id="new_additional_income" name="new_additional_income" required>
+					</div>
+					<br>
 					<button type="submit" class="btn btn-warning">Modify</button>
 				</form>
 			</div>

@@ -65,7 +65,7 @@ class BudgetController:
         self.session.add(income)
         self.session.commit()
 
-    def modify_expense(self, expense_id, new_amount):
+    def modify_expense(self, expense_id, new_year, new_month, new_amount, new_category):
         # Modify the amount of an existing expense
         expense = self.session.query(Expenses).get(expense_id)
         if expense:
@@ -100,7 +100,10 @@ class BudgetController:
                 total_left_entry.total_expenses_in_month = total_expenses_in_month
 
             # Modify the expense amount and commit the changes
+            expense.year = new_year
+            expense.month = new_month
             expense.amount = new_amount
+            expense.category = new_category
             self.session.commit()
 
     def delete_expense(self, expense_id):
@@ -141,11 +144,13 @@ class BudgetController:
             self.session.delete(expense)
             self.session.commit()
 
-    def modify_income(self, income_id, new_exchange_rate, new_income_usd,  new_additional_income):
+    def modify_income(self, income_id, new_year, new_month, new_exchange_rate, new_income_usd,  new_additional_income):
         # Modify the income amount of an existing income
         income = self.session.query(Incomes).get(income_id)
         if income:
             # Calculate additional fields based on the given logic
+            income.year = new_year
+            income.month = new_month
             income.exchange_rate = new_exchange_rate
             income.income_usd = new_income_usd
             income.additional_income = new_additional_income
@@ -215,7 +220,7 @@ class BudgetController:
         return all_expenses
 
 
-controller = BudgetController()
+#controller = BudgetController()
 
 #############  Add expenses  #############
 # controller.add_expense(2023, 'April', 'Food', 2000)
@@ -236,16 +241,16 @@ controller = BudgetController()
 # controller.add_income(2023, 'April', 36.5686, 300.00)
 
 #############  GET INCOMES  #############
-incomes = controller.get_incomes(2023, 'April')
-for income in incomes:
-    print(f"Income (USD): {income.income_usd}")
-    print(f"Income (UAH): {income.income_uah}")
-    print(f"Single Tax: {income.single_tax}")
-    print(f"SSC: {income.ssc}")
-    print(f"Total Taxes: {income.total_taxes}")
-    print(f"Clean Income (UAH): {income.clean_income}")
-    print(f"Additional Income: {income.additional_income}")
-    print(f"Total Left: {income.total_left}")
+# incomes = controller.get_incomes(2023, 'April')
+# for income in incomes:
+#     print(f"Income (USD): {income.income_usd}")
+#     print(f"Income (UAH): {income.income_uah}")
+#     print(f"Single Tax: {income.single_tax}")
+#     print(f"SSC: {income.ssc}")
+#     print(f"Total Taxes: {income.total_taxes}")
+#     print(f"Clean Income (UAH): {income.clean_income}")
+#     print(f"Additional Income: {income.additional_income}")
+#     print(f"Total Left: {income.total_left}")
 
 # total_left_for_april_2023 = controller.get_total_left(2023, 'April')
 # print(f"Total Left for April 2023: {total_left_for_april_2023}")

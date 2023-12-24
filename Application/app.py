@@ -64,8 +64,11 @@ def delete_expense(expense_id):
 @app.route('/modify_expense/<int:expense_id>', methods=['POST'])
 def modify_expense(expense_id):
     # Modify the amount of an expense by ID
+    new_year = request.form['new_year']
+    new_month = request.form['new_month']
     new_amount = float(request.form['new_amount'])
-    controller.modify_expense(expense_id, new_amount)
+    new_category = request.form['new_category']
+    controller.modify_expense(expense_id, new_year, new_month, new_amount, new_category)
     return redirect(url_for('expenses'))
 
 
@@ -82,9 +85,12 @@ def modify_income(income_id):
     new_exchange_rate = float(request.form['new_exchange_rate'])
     new_income_usd = float(request.form['new_income_usd'])
     new_additional_income = float(request.form['new_additional_income'])
-    controller.modify_income(income_id, new_exchange_rate, new_income_usd, new_additional_income)
+    new_year = request.form['new_year']
+    new_month = request.form['new_month']
+    controller.modify_income(income_id, new_year, new_month, new_exchange_rate, new_income_usd, new_additional_income)
     return redirect(url_for('incomes'))
 
 
 if __name__ == '__main__':
+    #app.run(host="0.0.0.0", port=5000)
     app.run(debug=True)

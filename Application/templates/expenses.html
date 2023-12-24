@@ -1,8 +1,7 @@
 {% include 'header.html' %}
-
-		<table class="table table-hover">
+		<table class="table table-primary table-hover">
 			<thead>
-				<tr class="table-dark">
+				<tr class="table-primary">
 					<th scope="col">Year</th>
 					<th scope="col">Month</th>
 					<th scope="col">Category</th>
@@ -31,10 +30,25 @@
 					</div>
 					<div class="modal-body">
 						<form action="/add_expense" method="post">
-							<label for="year">Year:</label>
-							<input type="text" class="form-control" id="year" name="year" required>
-							<label for="month">Month:</label>
-							<input type="text" class="form-control" id="month" name="month" required>
+					<label for="year">Year:</label>
+					<select class="form-select" id="year" name="year" required>
+						<option value="2024">2024</option>
+					</select>
+					<label for="month">Month:</label>
+					<select class="form-select" id="month" name="month" required>
+						<option value="January">January</option>
+						<option value="February">February</option>
+						<option value="March">March</option>
+						<option value="April">April</option>
+						<option value="May">May</option>
+						<option value="June">June</option>
+						<option value="July">July</option>
+						<option value="August">August</option>
+						<option value="September">September</option>
+						<option value="October">October</option>
+						<option value="November">November</option>
+						<option value="December">December</option>
+					</select>
 							<label for="category">Category:</label>
 							<select class="form-select" id="category" name="category" required>
 								<option value="Rent">Rent</option>
@@ -42,6 +56,25 @@
 								<option value="Tel. Inet. Bills">Tel. Inet. Bills</option>
 								<option value="Domestics">Domestics</option>
 								<option value="Online Buys">Online Buys</option>
+								<option value="Meds & Care">Meds & Care</option>
+								<option value="Food">Food</option>
+								<option value="Cigarettes">Cigarettes</option>
+								<option value="Alcohol">Alcohol</option>
+								<option value="Gaming">Gaming</option>
+								<option value="Transportation">Transportation</option>
+								<option value="Transfers">Transfers</option>
+								<option value="Cloth">Cloth</option>
+								<option value="Cafe & Bar">Cafe & Bar</option>
+								<option value="Team Building">Team Building</option>
+								<option value="Insurance">Insurance</option>
+								<option value="Tourism">Tourism</option>
+								<option value="Furniture">Furniture</option>
+								<option value="Udemy">Udemy</option>
+								<option value="Car">Car</option>
+								<option value="Bank Commission">Bank Commission</option>
+								<option value="Subscriptions">Subscriptions</option>
+								<option value="Dollars">Dollars</option>
+								<option value="Cat">Cat</option>
 							</select>
 
 							<!--<input type="text" class="form-control" id="category" name="category" required> !-->
@@ -53,6 +86,4 @@
 				</div>
 			</div>
 		</div>
-
-
 {% include 'footer.html' %}

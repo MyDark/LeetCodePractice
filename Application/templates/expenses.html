@@ -20,17 +20,42 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		<h3>Add Expense</h3>
-		<form action="/add_expense" method="post">
-			<label for="year">Year:</label>
-			<input type="text" id="year" name="year" required>
-			<label for="month">Month:</label>
-			<input type="text" id="month" name="month" required>
-			<label for="category">Category:</label>
-			<input type="text" id="category" name="category" required>
-			<label for="amount">Amount:</label>
-			<input type="text" id="amount" name="amount" required>
-			<button type="submit">Add Expense</button>
-		</form>
+
+<!-- Add Income Button -->
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
+		Add Expense
+		</button>
+		<!-- Add Income Modal -->
+		<div class="modal fade" id="addExpenseModal" tabindex="-1" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addExpenseModalLabel">Add Expense</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form action="/add_expense" method="post">
+							<label for="year">Year:</label>
+							<input type="text" class="form-control" id="year" name="year" required>
+							<label for="month">Month:</label>
+							<input type="text" class="form-control" id="month" name="month" required>
+							<label for="category">Category:</label>
+							<select class="form-select" id="category" name="category" required>
+								<option>Rent</option>
+								<option>Utilities</option>
+								<option>Tel. Inet. Bills</option>
+								<option>Domestics</option>
+								<option>Online Buys</option>
+							</select>
+							<!--<input type="text" class="form-control" id="category" name="category" required> !-->
+							<label for="amount">Amount:</label>
+							<input type="text" class="form-control" id="amount" name="amount" required><br>
+							<button type="submit" class="btn btn-success">Add Expense</button>
+				  		</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
 
 {% include 'footer.html' %}

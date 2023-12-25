@@ -20,6 +20,7 @@ def index():
 def incomes():
     accounts = account_controller.get_all_accounts()
     incomes = budget_controller.get_all_incomes()
+
     return render_template('incomes.html', accounts=accounts, incomes=incomes)
 
 
@@ -27,6 +28,7 @@ def incomes():
 def expenses():
     accounts = account_controller.get_all_accounts()
     expenses = budget_controller.get_all_expenses()
+
     return render_template('expenses.html', accounts=accounts, expenses=expenses)
 
 
@@ -84,30 +86,32 @@ def add_income():
 def delete_expense(expense_id):
     # Delete an expense by ID
     budget_controller.delete_expense(expense_id)
+    account_controller.get_all_accounts()
+    budget_controller.get_all_expenses()
+    budget_controller.get_all_incomes()
     return redirect(url_for('expenses'))
 
 
 @app.route('/modify_expense/<int:expense_id>', methods=['POST'])
 def modify_expense(expense_id):
-    # Modify the amount of an expense by ID
     new_year = request.form['new_year']
     new_month = request.form['new_month']
     new_amount = float(request.form['new_amount'])
     new_category = request.form['new_category']
     budget_controller.modify_expense(expense_id, new_year, new_month, new_amount, new_category)
+
     return redirect(url_for('expenses'))
 
 
 @app.route('/delete_income/<int:income_id>')
 def delete_income(income_id):
-    # Delete an income by ID
     budget_controller.delete_income(income_id)
+
     return redirect(url_for('incomes'))
 
 
 @app.route('/modify_income/<int:income_id>', methods=['POST'])
 def modify_income(income_id):
-    # Modify the income amount by ID
     new_exchange_rate = float(request.form['new_exchange_rate'])
     new_income_usd = float(request.form['new_income_usd'])
     new_additional_income = float(request.form['new_additional_income'])
@@ -115,12 +119,14 @@ def modify_income(income_id):
     new_month = request.form['new_month']
     budget_controller.modify_income(income_id, new_year, new_month, new_exchange_rate, new_income_usd,
                                     new_additional_income)
+
     return redirect(url_for('incomes'))
 
 
 @app.route('/accounts')
 def accounts():
     get_accounts = account_controller.get_all_accounts()
+
     return render_template('accounts.html', accounts=get_accounts)
 
 
@@ -130,6 +136,7 @@ def create_account():
     name = request.form['name']
     currency = request.form['currency']
     account_controller.create_account(name, currency)
+
     return redirect(url_for('accounts'))
 
 
@@ -137,6 +144,7 @@ def create_account():
 def delete_account(account_id):
     # Delete an account by ID
     account_controller.delete_account(account_id)
+
     return redirect(url_for('accounts'))
 
 
@@ -147,22 +155,10 @@ def modify_account(account_id):
     new_currency = request.form['new_currency']
     new_balance = float(request.form['new_balance'])
     account_controller.modify_account(account_id, new_name, new_currency, new_balance)
+
     return redirect(url_for('accounts'))
 
 
-@socketio.on('update_data')
-def handle_update_data(message):
-    # Triggered by the client to request updated data
-    # Send the updated data to the client
-    data = {
-        'your_data': 'get_updated_data_from_controller'
-    }
-    socketio.emit('data_updated', data)
-
-
-if __name__ == "__main__":
-    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)
-
-# if __name__ == '__main__':
-#     # app.run(host="0.0.0.0", port=5000)
-#     app.run(debug=True)
+if __name__ == '__main__':
+    # app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True)

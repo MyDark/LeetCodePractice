@@ -15,6 +15,8 @@ class Expenses(Base):
     amount = Column(DECIMAL(10, 2), nullable=True, default=0.00)
     total_in_month = Column(DECIMAL(10, 2), nullable=True, default=0.00)
     total_in_year = Column(DECIMAL(10, 2), nullable=True, default=0.00)
+    account_id = Column(Integer, ForeignKey('accounts.id'))
+    account = relationship('Accounts', back_populates='expenses')
 
 
 class Incomes(Base):
@@ -45,6 +47,16 @@ class Accounts(Base):
     currency = Column(String(255), nullable=False)
     balance = Column(DECIMAL(10, 2), nullable=True)
     incomes = relationship('Incomes', back_populates='account')
+    expenses = relationship('Expenses', back_populates='account')
+
+
+class DefaultAccount(Base):
+    __tablename__ = 'default_account'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), default='Default Account')
+    currency = Column(String(255), default='UAH')
+    balance = Column(DECIMAL(10, 2), default=0.0, nullable=True)
 
 
 engine = create_engine(Config.DATABASE_URI)

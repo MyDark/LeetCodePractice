@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
-from model import Expenses, Incomes
+from flask_socketio import SocketIO
 from controller import BudgetController, AccountController
 from config import Config
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = Config.DATABASE_URI
+app.config["SERVER_NAME"] = "127.0.0.1:5000"
 budget_controller = BudgetController()
 account_controller = AccountController()
 
@@ -25,28 +25,37 @@ def incomes():
 
 @app.route('/expenses')
 def expenses():
+    accounts = account_controller.get_all_accounts()
     expenses = budget_controller.get_all_expenses()
-    return render_template('expenses.html', expenses=expenses)
+    return render_template('expenses.html', accounts=accounts, expenses=expenses)
 
 
-@app.route('/add_expense', methods=['POST'])
+@app.route('/add_expense', methods=['GET', 'POST'])
 def add_expense():
-    # Add a new expense
-    year = int(request.form['year'])
-    month = request.form['month']
-    category = request.form['category']
-    amount = float(request.form['amount'])
+    if request.method == 'POST':
+        # Add a new expense
+        year = int(request.form['year'])
+        month = request.form['month']
+        category = request.form['category']
+        amount = float(request.form['amount'])
+        account_id = int(request.form['account_id'])
 
-    budget_controller.add_expense(year, month, category, amount)
+        # Check if the account exists before adding income
+        account = account_controller.get_account_by_id(account_id)
+        if account:
+            budget_controller.add_expense(year, month, category, amount, account_id)
+            return redirect(url_for('expenses'))
+        else:
+            return "Account not found!", 404
+    # If the request method is GET, fetch the list of accounts and existing incomes
+    accounts = account_controller.get_all_accounts()
+    expenses = budget_controller.get_all_expenses()  # You need to implement get_all_incomes() in your IncomeController
 
-    return redirect(url_for('expenses'))
+    return render_template('expenses.html', accounts=accounts, expenses=expenses)
 
 
 @app.route('/add_income', methods=['GET', 'POST'])
 def add_income():
-    acc = AccountController()
-    accounts = acc.get_all_accounts()
-
     if request.method == 'POST':
         # Process the form data
         year = int(request.form['year'])
@@ -57,7 +66,7 @@ def add_income():
         account_id = int(request.form['account_id'])
 
         # Check if the account exists before adding income
-        account = acc.get_account_by_id(account_id)
+        account = account_controller.get_account_by_id(account_id)
         if account:
             budget_controller.add_income(year, month, exchange_rate, income_usd, account_id, additional_income)
             return redirect(url_for('incomes'))
@@ -65,7 +74,7 @@ def add_income():
             return "Account not found!", 404
 
     # If the request method is GET, fetch the list of accounts and existing incomes
-    accounts = acc.get_all_accounts()
+    accounts = account_controller.get_all_accounts()
     incomes = budget_controller.get_all_incomes()  # You need to implement get_all_incomes() in your IncomeController
 
     return render_template('incomes.html', accounts=accounts, incomes=incomes)
@@ -104,7 +113,8 @@ def modify_income(income_id):
     new_additional_income = float(request.form['new_additional_income'])
     new_year = request.form['new_year']
     new_month = request.form['new_month']
-    budget_controller.modify_income(income_id, new_year, new_month, new_exchange_rate, new_income_usd, new_additional_income)
+    budget_controller.modify_income(income_id, new_year, new_month, new_exchange_rate, new_income_usd,
+                                    new_additional_income)
     return redirect(url_for('incomes'))
 
 
@@ -140,6 +150,19 @@ def modify_account(account_id):
     return redirect(url_for('accounts'))
 
 
-if __name__ == '__main__':
-    # app.run(host="0.0.0.0", port=5000)
-    app.run(debug=True)
+@socketio.on('update_data')
+def handle_update_data(message):
+    # Triggered by the client to request updated data
+    # Send the updated data to the client
+    data = {
+        'your_data': 'get_updated_data_from_controller'
+    }
+    socketio.emit('data_updated', data)
+
+
+if __name__ == "__main__":
+    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)
+
+# if __name__ == '__main__':
+#     # app.run(host="0.0.0.0", port=5000)
+#     app.run(debug=True)

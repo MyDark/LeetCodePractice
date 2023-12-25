@@ -2,4 +2,37 @@
     <td>{{ account.name }}</td>
     <td>{{ account.currency }} </td>
     <td>{{ account.balance }} </td>
+    <td>
+        <!-- Modify Account Button -->
+		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modifyAccountModal_{{ account.id }}">
+		Modify
+        </button>
+		<a href="{{ url_for('delete_account', account_id=account.id) }}" class="btn btn-danger">Delete</a>
+	</td>
 </tr>
+<!-- Modify account Modal -->
+<div class="modal fade" id="modifyAccountModal_{{ account.id }}" tabindex="-1" aria-labelledby="modifyAccountModalLabel_{{ account.id }}" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modifyAccountModalLabel_{{ account.id }}">Modify Account</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form action="{{ url_for('modify_account', account_id=account.id) }}" method="post">
+					<label for="new_name">Name:</label>
+                    <input type="text" class="form-control" id="new_name" name="new_name" required>
+                    <label for="new_currency">Currency:</label>
+                    <select class="form-select" id="new_currency" name="new_currency" required>
+                        <option value="UAH">UAH</option>
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                    </select>
+                    <label for="new_balance">Balance:</label>
+                    <input type="text" class="form-control" id="new_balance" name="new_balance" required><br>
+                    <button type="submit" class="btn btn-success">Modify Account</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

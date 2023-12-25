@@ -107,6 +107,23 @@ def create_account():
     return redirect(url_for('accounts'))
 
 
+@app.route('/delete_account/<int:account_id>')
+def delete_account(account_id):
+    # Delete an account by ID
+    account.delete_account(account_id)
+    return redirect(url_for('accounts'))
+
+
+@app.route('/modify_account/<int:account_id>', methods=['POST'])
+def modify_account(account_id):
+    # Modify the account information by ID
+    new_name = request.form['new_name']
+    new_currency = request.form['new_currency']
+    new_balance = float(request.form['new_balance'])
+    account.modify_account(account_id, new_name, new_currency, new_balance)
+    return redirect(url_for('accounts'))
+
+
 if __name__ == '__main__':
     # app.run(host="0.0.0.0", port=5000)
     app.run(debug=True)

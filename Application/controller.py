@@ -236,6 +236,26 @@ class AccountController:
         all_accounts = self.session.query(Accounts).all()
         return all_accounts
 
+    def delete_account(self, account_id):
+        # Delete an existing income
+        account = self.session.query(Accounts).get(account_id)
+        if account:
+            # Delete the income and commit the changes
+            self.session.delete(account)
+            self.session.commit()
+
+    def modify_account(self, account_id, new_name, new_currency, new_balance):
+        # Modify the account information
+        account = self.session.query(Accounts).get(account_id)
+        if account:
+            # Calculate additional fields based on the given logic
+            account.name = new_name
+            account.currency = new_currency
+            account.balance = new_balance
+
+            # Commit the changes
+            self.session.commit()
+
 #############  Add expenses  #############
 # controller.add_expense(2023, 'April', 'Food', 2000)
 

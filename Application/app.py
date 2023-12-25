@@ -7,8 +7,8 @@ from config import Config
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = Config.DATABASE_URI
-controller = BudgetController()
-account = AccountController()
+budget_controller = BudgetController()
+account_controller = AccountController()
 
 
 @app.route('/')
@@ -18,13 +18,14 @@ def index():
 
 @app.route('/incomes')
 def incomes():
-    incomes = controller.get_all_incomes()
-    return render_template('incomes.html', incomes=incomes)
+    accounts = account_controller.get_all_accounts()
+    incomes = budget_controller.get_all_incomes()
+    return render_template('incomes.html', accounts=accounts, incomes=incomes)
 
 
 @app.route('/expenses')
 def expenses():
-    expenses = controller.get_all_expenses()
+    expenses = budget_controller.get_all_expenses()
     return render_template('expenses.html', expenses=expenses)
 
 
@@ -36,29 +37,44 @@ def add_expense():
     category = request.form['category']
     amount = float(request.form['amount'])
 
-    controller.add_expense(year, month, category, amount)
+    budget_controller.add_expense(year, month, category, amount)
 
     return redirect(url_for('expenses'))
 
 
-@app.route('/add_income', methods=['POST'])
+@app.route('/add_income', methods=['GET', 'POST'])
 def add_income():
-    # Add a new income
-    year = int(request.form['year'])
-    month = request.form['month']
-    exchange_rate = float(request.form['exchange_rate'])
-    income_usd = float(request.form['income_usd'])
-    additional_income = float(request.form['additional_income'])
+    acc = AccountController()
+    accounts = acc.get_all_accounts()
 
-    controller.add_income(year, month, exchange_rate, income_usd, additional_income)
+    if request.method == 'POST':
+        # Process the form data
+        year = int(request.form['year'])
+        month = request.form['month']
+        exchange_rate = float(request.form['exchange_rate'])
+        income_usd = float(request.form['income_usd'])
+        additional_income = float(request.form['additional_income'])
+        account_id = int(request.form['account_id'])
 
-    return redirect(url_for('incomes'))
+        # Check if the account exists before adding income
+        account = acc.get_account_by_id(account_id)
+        if account:
+            budget_controller.add_income(year, month, exchange_rate, income_usd, account_id, additional_income)
+            return redirect(url_for('incomes'))
+        else:
+            return "Account not found!", 404
+
+    # If the request method is GET, fetch the list of accounts and existing incomes
+    accounts = acc.get_all_accounts()
+    incomes = budget_controller.get_all_incomes()  # You need to implement get_all_incomes() in your IncomeController
+
+    return render_template('incomes.html', accounts=accounts, incomes=incomes)
 
 
 @app.route('/delete_expense/<int:expense_id>')
 def delete_expense(expense_id):
     # Delete an expense by ID
-    controller.delete_expense(expense_id)
+    budget_controller.delete_expense(expense_id)
     return redirect(url_for('expenses'))
 
 
@@ -69,14 +85,14 @@ def modify_expense(expense_id):
     new_month = request.form['new_month']
     new_amount = float(request.form['new_amount'])
     new_category = request.form['new_category']
-    controller.modify_expense(expense_id, new_year, new_month, new_amount, new_category)
+    budget_controller.modify_expense(expense_id, new_year, new_month, new_amount, new_category)
     return redirect(url_for('expenses'))
 
 
 @app.route('/delete_income/<int:income_id>')
 def delete_income(income_id):
     # Delete an income by ID
-    controller.delete_income(income_id)
+    budget_controller.delete_income(income_id)
     return redirect(url_for('incomes'))
 
 
@@ -88,14 +104,14 @@ def modify_income(income_id):
     new_additional_income = float(request.form['new_additional_income'])
     new_year = request.form['new_year']
     new_month = request.form['new_month']
-    controller.modify_income(income_id, new_year, new_month, new_exchange_rate, new_income_usd, new_additional_income)
+    budget_controller.modify_income(income_id, new_year, new_month, new_exchange_rate, new_income_usd, new_additional_income)
     return redirect(url_for('incomes'))
 
 
 @app.route('/accounts')
 def accounts():
-    accounts = account.get_all_accounts()
-    return render_template('accounts.html', accounts=accounts)
+    get_accounts = account_controller.get_all_accounts()
+    return render_template('accounts.html', accounts=get_accounts)
 
 
 @app.route('/create_account', methods=['POST'])
@@ -103,14 +119,14 @@ def create_account():
     # Create a new account
     name = request.form['name']
     currency = request.form['currency']
-    account.create_account(name, currency)
+    account_controller.create_account(name, currency)
     return redirect(url_for('accounts'))
 
 
 @app.route('/delete_account/<int:account_id>')
 def delete_account(account_id):
     # Delete an account by ID
-    account.delete_account(account_id)
+    account_controller.delete_account(account_id)
     return redirect(url_for('accounts'))
 
 
@@ -120,7 +136,7 @@ def modify_account(account_id):
     new_name = request.form['new_name']
     new_currency = request.form['new_currency']
     new_balance = float(request.form['new_balance'])
-    account.modify_account(account_id, new_name, new_currency, new_balance)
+    account_controller.modify_account(account_id, new_name, new_currency, new_balance)
     return redirect(url_for('accounts'))
 
 

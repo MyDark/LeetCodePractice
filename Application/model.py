@@ -33,6 +33,8 @@ class Incomes(Base):
     additional_income = Column(DECIMAL(10, 2), nullable=True, default=0.00)
     expenses = Column(DECIMAL(10, 2), nullable=True, default=0.00)
     total_left = Column(DECIMAL(10, 2), nullable=True, default=0.00)
+    account_id = Column(Integer, ForeignKey('accounts.id'))
+    account = relationship('Accounts', back_populates='incomes')
 
 
 class Accounts(Base):
@@ -42,6 +44,7 @@ class Accounts(Base):
     name = Column(String(255), nullable=False)
     currency = Column(String(255), nullable=False)
     balance = Column(DECIMAL(10, 2), nullable=True)
+    incomes = relationship('Incomes', back_populates='account')
 
 
 engine = create_engine(Config.DATABASE_URI)

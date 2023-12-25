@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, func
 from model import Expenses, Incomes, Accounts
@@ -48,22 +50,36 @@ class BudgetController:
         self.session.add(expense)
         self.session.commit()
 
-    def add_income(self, year, month, exchange_rate, income_usd, additional_income=0.00):
-        # Create an income object with provided data
-        income = Incomes(year=year, month=month, exchange_rate=exchange_rate, income_usd=income_usd)
+    def add_income(self, year, month, exchange_rate, income_usd, account_id, additional_income=0.00):
+        # Get the account by ID
+        account = self.session.query(Accounts).get(account_id)
 
-        # Calculate additional fields based on the given logic
-        income.income_uah = income_usd * exchange_rate
-        income.single_tax = 0.05 * income.income_uah  # Single Tax is 5%
-        income.ssc = 1474.00
-        income.total_taxes = income.single_tax + income.ssc
-        income.clean_income = income.income_uah - income.total_taxes
-        income.additional_income = additional_income
-        income.total_left = income.clean_income + income.additional_income
+        if account:
+            # Create an income object with provided data
+            income = Incomes(
+                year=year,
+                month=month,
+                exchange_rate=exchange_rate,
+                income_usd=income_usd,
+                account=account,
+                additional_income=additional_income
+            )
 
-        # Add the income to the session and commit the changes
-        self.session.add(income)
-        self.session.commit()
+            # Calculate additional fields based on the given logic
+            income.income_uah = income_usd * exchange_rate
+            income.single_tax = 0.05 * income.income_uah  # Single Tax is 5%
+            income.ssc = 1474.00
+            income.total_taxes = income.single_tax + income.ssc
+            income.clean_income = income.income_uah - income.total_taxes
+            income.total_left = income.clean_income + income.additional_income
+
+            account.balance += Decimal(str(income.total_left))
+
+            # Add the income to the session and commit the changes
+            self.session.add(income)
+            self.session.commit()
+        else:
+            print("Account not found!")
 
     def modify_expense(self, expense_id, new_year, new_month, new_amount, new_category):
         # Modify the amount of an existing expense
@@ -232,6 +248,9 @@ class AccountController:
         self.session.add(account)
         self.session.commit()
 
+    def get_account_by_id(self, account_id):
+        return self.session.get(Accounts, account_id)
+
     def get_all_accounts(self):
         all_accounts = self.session.query(Accounts).all()
         return all_accounts
@@ -255,6 +274,8 @@ class AccountController:
 
             # Commit the changes
             self.session.commit()
+
+
 
 #############  Add expenses  #############
 # controller.add_expense(2023, 'April', 'Food', 2000)

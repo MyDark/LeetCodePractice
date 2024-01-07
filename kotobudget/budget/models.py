@@ -51,9 +51,15 @@ class TaxRule(models.Model):
     """
     Represents a rule for calculating taxes.
     """
+    class TaxType(models.TextChoices):
+        PERCENTAGE = 'PER', 'Percentage'
+        FIXED_AMOUNT = 'FIX', 'Fixed Amount'
+
     name = models.CharField(max_length=255)
     description = models.TextField()
-    percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    tax_type = models.CharField(max_length=3, choices=TaxType.choices, default=TaxType.PERCENTAGE)
+    percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, blank=True, null=True)
+    fixed_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -84,7 +90,9 @@ class Transfer(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     source_currency = models.CharField(max_length=3)
     destination_currency = models.CharField(max_length=3)
+    exchange_rate = models.DecimalField(max_digits=10, decimal_places=4, default=1.0000)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"Transfer - {self.amount} {self.source_currency} to {self.destination_currency}"
+

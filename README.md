@@ -71,5 +71,8 @@ Represents a transfer of money between two accounts, possibly in different curre
 `python manage.py makemigrations`
 `python manage.py migrate`
 
+#### Create superuser:
+`python manage.py createsuperuser`
+
 #### Run the development server:
 `python manage.py runserver`

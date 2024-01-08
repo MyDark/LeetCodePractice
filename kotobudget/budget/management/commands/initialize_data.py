@@ -1,7 +1,6 @@
-# management/commands/initialize_data.py
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from kotobudget.budget.models import Account, Transaction, ExchangeRate, TaxRule, Transfer
+from kotobudget.budget.models import Currency, Account, Transaction, ExchangeRate, TaxRule, Transfer
 
 
 class Command(BaseCommand):
@@ -9,8 +8,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Create sample accounts
-        account1 = Account.objects.create(name='Account 1', currency='USD', balance=1000.00)
-        account2 = Account.objects.create(name='Account 2', currency='EUR', balance=500.00)
+        currency_usd = Currency.objects.create(code='USD', name='US Dollar')
+        currency_eur = Currency.objects.create(code='EUR', name='Euro')
+
+        account1 = Account.objects.create(name='Account 1', currency=currency_usd, balance=1000.00)
+        account2 = Account.objects.create(name='Account 2', currency=currency_eur, balance=500.00)
 
         # Perform transactions
         income_transaction = Transaction.objects.create(
@@ -18,14 +20,15 @@ class Command(BaseCommand):
             account=account1,
             transaction_type=Transaction.TransactionType.INCOME,
             amount=500.00,
-            currency='USD',
+            currency=currency_usd,
             description='Salary'
         )
+
         # Create an exchange rate between USD and EUR
         exchange_rate_usd_to_eur = ExchangeRate.objects.create(
             timestamp=timezone.now(),
             name='USD to EUR',
-            currency='USD',
+            currency=currency_usd,
             rate=0.85  # Example exchange rate
         )
 
@@ -35,8 +38,8 @@ class Command(BaseCommand):
             source_account=account1,
             destination_account=account2,
             amount=100.00,
-            source_currency='USD',
-            destination_currency='EUR',
+            source_currency=currency_usd,
+            destination_currency=currency_eur,
             exchange_rate=exchange_rate_usd_to_eur.rate,
             description='Transfer between accounts'
         )
@@ -46,7 +49,7 @@ class Command(BaseCommand):
             account=account1,
             transaction_type=Transaction.TransactionType.EXPENSE,
             amount=200.00,
-            currency='USD',
+            currency=currency_usd,
             description='Groceries'
         )
 
@@ -69,14 +72,6 @@ class Command(BaseCommand):
 
         # Use the correct tax rule for calculation
         tax_amount = income_transaction.amount * (percentage_tax_rule.percentage / 100)
-        tax_payment = TaxPayment.objects.create(
-            timestamp=timezone.now(),
-            account=account1,
-            amount=tax_amount,
-            currency='USD',
-            tax_rule=percentage_tax_rule,  # Use the percentage tax rule here
-            description='Income Tax Payment'
-        )
 
         transfer_amount_in_source_currency = transfer_transaction.amount * transfer_transaction.exchange_rate
         account1.balance -= transfer_transaction.amount
@@ -85,5 +80,5 @@ class Command(BaseCommand):
         account2.save()
 
         # Print account balances after transactions
-        self.stdout.write(f'Account 1 Balance: {account1.balance} {account1.currency}')
-        self.stdout.write(f'Account 2 Balance: {account2.balance} {account2.currency}')
+        self.stdout.write(f'Account 1 Balance: {account1.balance} {account1.currency.code}')
+        self.stdout.write(f'Account 2 Balance: {account2.balance} {account2.currency.code}')

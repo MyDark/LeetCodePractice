@@ -1,7 +1,7 @@
 # management/commands/initialize_data.py
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from kotobudget.budget.models import Account, Transaction, ExchangeRate, TaxRule, TaxPayment, Transfer
+from kotobudget.budget.models import Account, Transaction, ExchangeRate, TaxRule, Transfer
 
 
 class Command(BaseCommand):

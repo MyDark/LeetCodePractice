@@ -9,7 +9,7 @@ class Currency(models.Model):
     name = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.code} - {self.name}"
+        return f"{self.code}"
 
 
 class Account(models.Model):
@@ -22,28 +22,7 @@ class Account(models.Model):
     balance = models.DecimalField(max_digits=20, decimal_places=2, default=0)
 
     def __str__(self):
-        return self.name
-
-
-class Transaction(models.Model):
-    """
-    Represents a financial transaction, capturing details of income, expense, or transfer between accounts.
-    """
-
-    class TransactionType(models.TextChoices):
-        INCOME = 'IN', 'Income'
-        EXPENSE = 'EX', 'Expense'
-        TRANSFER = 'TR', 'Transfer'
-
-    timestamp = models.DateTimeField(auto_now_add=True)
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='transactions')
-    transaction_type = models.CharField(max_length=2, choices=TransactionType.choices)
-    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
-    description = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.transaction_type} - {self.amount} {self.currency}"
+        return f"{self.name} - {self.currency}"
 
 
 class ExchangeRate(models.Model):
@@ -60,9 +39,6 @@ class ExchangeRate(models.Model):
 
 
 class TaxRule(models.Model):
-    """
-    Represents a rule for calculating taxes.
-    """
     class TaxType(models.TextChoices):
         PERCENTAGE = 'PER', 'Percentage'
         FIXED_AMOUNT = 'FIX', 'Fixed Amount'
@@ -76,11 +52,32 @@ class TaxRule(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if self.tax_type == self.TaxType.PERCENTAGE:
+            self.fixed_amount = 0.00
+        elif self.tax_type == self.TaxType.FIXED_AMOUNT:
+            self.percentage = 0.00
+        super().save(*args, **kwargs)
+
+
+class Transaction(models.Model):
+    class TransactionType(models.TextChoices):
+        INCOME = 'IN', 'Income'
+        EXPENSE = 'EX', 'Expense'
+        TAX = 'TX', 'Taxes'
+
+    timestamp = models.DateTimeField(auto_now_add=True)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='transactions')
+    transaction_type = models.CharField(max_length=2, choices=TransactionType.choices)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.transaction_type} - {self.amount} {self.currency}"
+
 
 class Transfer(models.Model):
-    """
-    Represents a transfer of money between two accounts, possibly in different currencies.
-    """
     timestamp = models.DateTimeField(auto_now_add=True)
     source_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='source_transfers')
     destination_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='destination_transfers')
@@ -92,3 +89,4 @@ class Transfer(models.Model):
 
     def __str__(self):
         return f"Transfer - {self.amount} {self.source_currency} to {self.destination_currency}"
+
